@@ -155,15 +155,15 @@
                         <configuration>
                             <target>
                                 <delete dir="${wordnet.path}/WordNet-3.0"/>
-                                <move file="${wordnet.path}/data.adj" tofile="${wordnet.path}/adj.dat" />
-                                <move file="${wordnet.path}/data.adv" tofile="${wordnet.path}/adv.dat" />
-                                <move file="${wordnet.path}/data.noun" tofile="${wordnet.path}/noun.dat" />
-                                <move file="${wordnet.path}/data.verb" tofile="${wordnet.path}/verb.dat" />
-                                <move file="${wordnet.path}/index.adj" tofile="${wordnet.path}/adj.idx" />
-                                <move file="${wordnet.path}/index.adv" tofile="${wordnet.path}/adv.idx" />
-                                <move file="${wordnet.path}/index.noun" tofile="${wordnet.path}/noun.idx" />
-                                <move file="${wordnet.path}/index.sense" tofile="${wordnet.path}/sense.idx" />
-                                <move file="${wordnet.path}/index.verb" tofile="${wordnet.path}/verb.idx" />
+                                <move file="${wordnet.path}/data.adj" tofile="${wordnet.path}/data.adj" />
+                                <move file="${wordnet.path}/data.adv" tofile="${wordnet.path}/data.adv" />
+                                <move file="${wordnet.path}/data.noun" tofile="${wordnet.path}/data.noun" />
+                                <move file="${wordnet.path}/data.verb" tofile="${wordnet.path}/data.verb" />
+                                <move file="${wordnet.path}/index.adj" tofile="${wordnet.path}/index.adj" />
+                                <move file="${wordnet.path}/index.adv" tofile="${wordnet.path}/index.adv" />
+                                <move file="${wordnet.path}/index.noun" tofile="${wordnet.path}/index.noun" />
+                                <move file="${wordnet.path}/index.sense" tofile="${wordnet.path}/index.sense" />
+                                <move file="${wordnet.path}/index.verb" tofile="${wordnet.path}/index.verb" />
                             </target>
                         </configuration>
                         <goals>
