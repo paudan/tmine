@@ -46,7 +46,7 @@ public class NamedEntityFinder implements net.tmine.processing.NamedEntityFinder
 
     @Override
     public List<Entity> findNameEntities(Sentence sentence) {
-        NameFinderME finder = Toolkit.getNameFinder();
+        NameFinderME finder = Toolkit.getInstance().getNameFinder();
         if (finder == null)
             return null;
         return findEntities(finder, Entity.EntityType.PERSON, sentence);
@@ -54,7 +54,7 @@ public class NamedEntityFinder implements net.tmine.processing.NamedEntityFinder
 
     @Override
     public List<Entity> findDateEntities(Sentence sentence) {
-        NameFinderME finder = Toolkit.getDateFinder();
+        NameFinderME finder = Toolkit.getInstance().getDateFinder();
         if (finder == null)
             return null;
         return findEntities(finder, Entity.EntityType.DATE, sentence);
@@ -62,7 +62,7 @@ public class NamedEntityFinder implements net.tmine.processing.NamedEntityFinder
 
     @Override
     public List<Entity> findTimeEntities(Sentence sentence) {
-        NameFinderME finder = Toolkit.getTimeFinder();
+        NameFinderME finder = Toolkit.getInstance().getTimeFinder();
         if (finder == null)
             return null;
         return findEntities(finder, Entity.EntityType.TIME, sentence);
@@ -70,7 +70,7 @@ public class NamedEntityFinder implements net.tmine.processing.NamedEntityFinder
 
     @Override
     public List<Entity> findLocationEntities(Sentence sentence) {
-        NameFinderME finder = Toolkit.getLocationFinder();
+        NameFinderME finder = Toolkit.getInstance().getLocationFinder();
         if (finder == null)
             return null;
         return findEntities(finder, Entity.EntityType.LOCATION, sentence);
@@ -78,7 +78,7 @@ public class NamedEntityFinder implements net.tmine.processing.NamedEntityFinder
 
     @Override
     public List<Entity> findMoneyEntities(Sentence sentence) {
-        NameFinderME finder = Toolkit.getMoneyFinder();
+        NameFinderME finder = Toolkit.getInstance().getMoneyFinder();
         if (finder == null)
             return null;
         return findEntities(finder, Entity.EntityType.MONEY, sentence);
@@ -86,7 +86,7 @@ public class NamedEntityFinder implements net.tmine.processing.NamedEntityFinder
 
     @Override
     public List<Entity> findPercentageEntities(Sentence sentence) {
-        NameFinderME finder = Toolkit.getPercentageFinder();
+        NameFinderME finder = Toolkit.getInstance().getPercentageFinder();
         if (finder == null)
             return null;
         return findEntities(finder, Entity.EntityType.PERCENTAGE, sentence);
@@ -94,7 +94,7 @@ public class NamedEntityFinder implements net.tmine.processing.NamedEntityFinder
 
     @Override
     public List<Entity> findOrganizationEntities(Sentence sentence) {
-        NameFinderME finder = Toolkit.getOrganizationFinder();
+        NameFinderME finder = Toolkit.getInstance().getOrganizationFinder();
         if (finder == null)
             return null;
         return findEntities(finder, Entity.EntityType.ORGANIZATION, sentence);

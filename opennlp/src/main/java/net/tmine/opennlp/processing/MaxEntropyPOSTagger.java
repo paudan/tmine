@@ -23,8 +23,13 @@ import opennlp.tools.tokenize.Tokenizer;
 public class MaxEntropyPOSTagger implements net.tmine.processing.POSTagger {
     
     private static MaxEntropyPOSTagger INSTANCE;
+    private POSTagger tagger;
+    private Tokenizer tokenizer;
     
-    private MaxEntropyPOSTagger() {}
+    private MaxEntropyPOSTagger() {
+        tagger = Toolkit.getInstance().getPOSTagger(EnPosMaxentModel.url);
+        tokenizer = Toolkit.getInstance().getTokenizer();
+    }
     
     public static MaxEntropyPOSTagger getInstance() {
         if (INSTANCE == null)
@@ -34,8 +39,6 @@ public class MaxEntropyPOSTagger implements net.tmine.processing.POSTagger {
 
     @Override
     public String[] tagSentence(String sentence) {
-        POSTagger tagger = Toolkit.getPOSTagger(EnPosMaxentModel.url);
-        Tokenizer tokenizer = Toolkit.getTokenizer();
         if (tagger == null || sentence == null)
             return null;
         return tagger.tag(tokenizer.tokenize(sentence));
@@ -43,7 +46,6 @@ public class MaxEntropyPOSTagger implements net.tmine.processing.POSTagger {
 
     @Override
     public String[] tagSentence(Sentence sentence) {
-        POSTagger tagger = Toolkit.getPOSTagger(EnPosMaxentModel.url);
         if (tagger == null || sentence == null)
             return null;
         return tagger.tag(sentence.tokenize());
@@ -51,7 +53,6 @@ public class MaxEntropyPOSTagger implements net.tmine.processing.POSTagger {
 
     @Override
     public String[] tagSentence(String[] sentence) {
-        POSTagger tagger = Toolkit.getPOSTagger(EnPosMaxentModel.url);
         if (tagger == null || sentence == null)
             return null;
         return tagger.tag(sentence);

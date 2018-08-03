@@ -48,14 +48,14 @@ public class Sentence extends net.tmine.entities.Sentence {
 
 
     public String[] tokenize() {
-        Tokenizer tokenizer = Toolkit.getTokenizer();
+        Tokenizer tokenizer = Toolkit.getInstance().getTokenizer();
         if (tokenizer == null)
             return null;
         return tokenizer.tokenize(sentence);
     }
 
     public String[] chunkSentence() {
-        Chunker chunker_ = Toolkit.getChunker();
+        Chunker chunker_ = Toolkit.getInstance().getChunker();
         if (chunker_ == null || sentence == null)
             return null;
         return chunker_.chunk(tokenize(), tagger.tagSentence(sentence));
@@ -68,18 +68,18 @@ public class Sentence extends net.tmine.entities.Sentence {
         final Parse p = new Parse(sentence, new Span(0, sentence.length()),
                 // the label for the top if an incomplete node
                 AbstractBottomUpParser.INC_NODE, 1, 0);
-        Tokenizer tokenizer = Toolkit.getTokenizer();
+        Tokenizer tokenizer = Toolkit.getInstance().getTokenizer();
         if (tokenizer == null)
             return null;
         final Span[] spans = tokenizer.tokenizePos(sentence);
         for (int idx = 0; idx < spans.length; idx++)
             // flesh out the parse with token sub-parses
             p.insert(new Parse(sentence, spans[idx], AbstractBottomUpParser.TOK_NODE, 0, idx));
-        return Toolkit.getParser().parse(p);
+        return Toolkit.getInstance().getParser().parse(p);
     }
 
     public DiscourseEntity[] findEntityMentions() throws IOException {
-        Linker _linker = Toolkit.getLinker();
+        Linker _linker = Toolkit.getInstance().getLinker();
         if (_linker == null)
             return null;
         Mention[] mentions = Document.findEntityMentions(_linker, this, 0);

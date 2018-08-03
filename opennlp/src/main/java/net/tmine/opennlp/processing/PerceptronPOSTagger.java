@@ -22,8 +22,13 @@ import opennlp.tools.tokenize.Tokenizer;
 public class PerceptronPOSTagger implements net.tmine.processing.POSTagger {
     
     private static PerceptronPOSTagger INSTANCE;
+    private POSTagger tagger;
+    private Tokenizer tokenizer;
     
-    private PerceptronPOSTagger () {}
+    private PerceptronPOSTagger() {
+        tagger = Toolkit.getInstance().getPOSTagger(EnPosPerceptronModel.url);
+        tokenizer = Toolkit.getInstance().getTokenizer();
+    }
     
     public static PerceptronPOSTagger getInstance() {
         if (INSTANCE == null)
@@ -33,8 +38,6 @@ public class PerceptronPOSTagger implements net.tmine.processing.POSTagger {
     
     @Override
     public String[] tagSentence(String sentence) {
-        POSTagger tagger = Toolkit.getPOSTagger(EnPosPerceptronModel.url);
-        Tokenizer tokenizer = Toolkit.getTokenizer();
         if (tagger == null || sentence == null)
             return null;
         return tagger.tag(tokenizer.tokenize(sentence));
@@ -42,7 +45,6 @@ public class PerceptronPOSTagger implements net.tmine.processing.POSTagger {
 
     @Override
     public String[] tagSentence(net.tmine.entities.Sentence sentence) {
-        POSTagger tagger = Toolkit.getPOSTagger(EnPosPerceptronModel.url);
         if (tagger == null || sentence == null)
             return null;
         return tagger.tag(sentence.tokenize());
@@ -50,7 +52,6 @@ public class PerceptronPOSTagger implements net.tmine.processing.POSTagger {
 
     @Override
     public String[] tagSentence(String[] sentence) {
-        POSTagger tagger = Toolkit.getPOSTagger(EnPosPerceptronModel.url);
         if (tagger == null || sentence == null)
             return null;
         return tagger.tag(sentence);

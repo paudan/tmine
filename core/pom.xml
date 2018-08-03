@@ -5,7 +5,13 @@
     <groupId>paudan.tmine</groupId>
     <artifactId>core</artifactId>
     <version>1.0</version>
-    <packaging>jar</packaging>
+    <packaging>jar</packaging> 
+    <repositories>
+        <repository>
+            <id>clojars.org</id>
+            <url>https://repo.clojars.org</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -40,11 +46,6 @@
             <version>4.1</version>
         </dependency>
         <dependency>
-            <groupId>uk.ac.abdn</groupId>
-            <artifactId>SimpleNLG</artifactId>
-            <version>4.4.8</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>21.0</version>
@@ -63,6 +64,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.abdn</groupId>
+            <artifactId>SimpleNLG</artifactId>
+            <version>4.4.8</version>
         </dependency>
     </dependencies>
     <build> 
@@ -155,15 +161,15 @@
                         <configuration>
                             <target>
                                 <delete dir="${wordnet.path}/WordNet-3.0"/>
-                                <move file="${wordnet.path}/data.adj" tofile="${wordnet.path}/data.adj" />
-                                <move file="${wordnet.path}/data.adv" tofile="${wordnet.path}/data.adv" />
-                                <move file="${wordnet.path}/data.noun" tofile="${wordnet.path}/data.noun" />
-                                <move file="${wordnet.path}/data.verb" tofile="${wordnet.path}/data.verb" />
-                                <move file="${wordnet.path}/index.adj" tofile="${wordnet.path}/index.adj" />
-                                <move file="${wordnet.path}/index.adv" tofile="${wordnet.path}/index.adv" />
-                                <move file="${wordnet.path}/index.noun" tofile="${wordnet.path}/index.noun" />
-                                <move file="${wordnet.path}/index.sense" tofile="${wordnet.path}/index.sense" />
-                                <move file="${wordnet.path}/index.verb" tofile="${wordnet.path}/index.verb" />
+                                <move file="${wordnet.path}/data.adj" tofile="${wordnet.path}/adj.dat" />
+                                <move file="${wordnet.path}/data.adv" tofile="${wordnet.path}/adv.dat" />
+                                <move file="${wordnet.path}/data.noun" tofile="${wordnet.path}/noun.dat" />
+                                <move file="${wordnet.path}/data.verb" tofile="${wordnet.path}/verb.dat" />
+                                <move file="${wordnet.path}/index.adj" tofile="${wordnet.path}/adj.idx" />
+                                <move file="${wordnet.path}/index.adv" tofile="${wordnet.path}/adv.idx" />
+                                <move file="${wordnet.path}/index.noun" tofile="${wordnet.path}/noun.idx" />
+                                <move file="${wordnet.path}/index.sense" tofile="${wordnet.path}/sense.idx" />
+                                <move file="${wordnet.path}/index.verb" tofile="${wordnet.path}/verb.idx" />
                             </target>
                         </configuration>
                         <goals>

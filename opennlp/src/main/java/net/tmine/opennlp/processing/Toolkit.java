@@ -55,17 +55,24 @@ import opennlp.tools.tokenize.TokenizerModel;
 
 public class Toolkit {
 
-    private static Tokenizer tokenizer;
-    private static Linker linker;
-    private static POSTagger maxEntTagger, perceptronTagger;
-    private static Chunker chunker;
-    private static Parser parser;
-    private static NameFinderME nameF, dateF, timeF, locationF, organizationF, moneyF, percentageF;
+    private Tokenizer tokenizer;
+    private Linker linker;
+    private POSTagger maxEntTagger, perceptronTagger;
+    private Chunker chunker;
+    private Parser parser;
+    private NameFinderME nameF, dateF, timeF, locationF, organizationF, moneyF, percentageF;
+    
+    private static Toolkit INSTANCE;
 
-    private Toolkit() {
+    private Toolkit() {}
+    
+    public static Toolkit getInstance() {
+        if (INSTANCE == null)
+            INSTANCE = new Toolkit();
+        return INSTANCE;
     }
 
-    public static Tokenizer getTokenizer() {
+    public Tokenizer getTokenizer() {
         if (tokenizer == null)
             try (InputStream modelIn = EnTokenModel.url.openStream()) {
                 TokenizerModel model = new TokenizerModel(modelIn);
@@ -76,12 +83,12 @@ public class Toolkit {
         return tokenizer;
     }
 
-    public static opennlp.tools.postag.POSTagger getCustomTagger(String path) {
+    public opennlp.tools.postag.POSTagger getCustomTagger(String path) {
         URL modelFile = Toolkit.class.getClassLoader().getResource(path);
-        return Toolkit.getPOSTagger(modelFile);
+        return getPOSTagger(modelFile);
     }
 
-    public static opennlp.tools.postag.POSTagger getPOSTagger(URL modelURL) {
+    public opennlp.tools.postag.POSTagger getPOSTagger(URL modelURL) {
         try (InputStream modelIn = modelURL.openStream()) {
             POSModel model = new POSModel(modelIn);
             return new POSTaggerME(model);
@@ -91,19 +98,19 @@ public class Toolkit {
         return null;
     }
 
-    public static POSTagger getMaxEntropyPOSTagger() {
+    public POSTagger getMaxEntropyPOSTagger() {
         if (maxEntTagger == null)
             maxEntTagger = MaxEntropyPOSTagger.getInstance();
         return maxEntTagger;
     }
 
-    public static POSTagger getPerceptronPOSTagger() {
+    public POSTagger getPerceptronPOSTagger() {
         if (perceptronTagger == null)
             perceptronTagger = PerceptronPOSTagger.getInstance();
         return perceptronTagger;
     }
 
-    public static Chunker getChunker() {
+    public Chunker getChunker() {
         if (chunker == null)
             try (InputStream modelIn = EnChunkerModel.url.openStream()) {
                 ChunkerModel model = new ChunkerModel(modelIn);
@@ -114,7 +121,7 @@ public class Toolkit {
         return chunker;
     }
 
-    public static Parser getParser() {
+    public Parser getParser() {
         if (parser == null)
             try (InputStream modelIn = EnParserChunkingModel.url.openStream()) {
                 ParserModel model = new ParserModel(modelIn);
@@ -125,7 +132,7 @@ public class Toolkit {
         return parser;
     }
 
-    public static Linker getLinker() {
+    public Linker getLinker() {
         if (linker == null)
             try {
                 linker = new DefaultLinker("coref", LinkerMode.TEST);
@@ -139,7 +146,7 @@ public class Toolkit {
         return linker;
     }
 
-    private static NameFinderME initNameFinder(URL modelURL) {
+    private NameFinderME initNameFinder(URL modelURL) {
         try (InputStream modelIn = modelURL.openStream()) {
             TokenNameFinderModel model = new TokenNameFinderModel(modelIn);
             return new NameFinderME(model);
@@ -149,50 +156,50 @@ public class Toolkit {
         return null;
     }
 
-    public static NameFinderME getNameFinder() {
+    public NameFinderME getNameFinder() {
         if (nameF == null)
             nameF = initNameFinder(EnNerPersonModel.url);
         return nameF;
     }
 
-    public static NameFinderME getDateFinder() {
+    public NameFinderME getDateFinder() {
         if (dateF == null)
             dateF = initNameFinder(EnNerDateModel.url);
         return dateF;
     }
 
-    public static NameFinderME getTimeFinder() {
+    public NameFinderME getTimeFinder() {
         if (timeF == null)
             timeF = initNameFinder(EnNerTimeModel.url);
         return timeF;
     }
 
-    public static NameFinderME getLocationFinder() {
+    public NameFinderME getLocationFinder() {
         if (locationF == null)
             locationF = initNameFinder(EnNerLocationModel.url);
         return locationF;
     }
 
-    public static NameFinderME getMoneyFinder() {
+    public NameFinderME getMoneyFinder() {
         if (moneyF == null)
             moneyF = initNameFinder(EnNerMoneyModel.url);
         return moneyF;
     }
 
-    public static NameFinderME getPercentageFinder() {
+    public NameFinderME getPercentageFinder() {
         if (percentageF == null)
             percentageF = initNameFinder(EnNerPercentageModel.url);
         return percentageF;
     }
 
-    public static NameFinderME getOrganizationFinder() {
+    public NameFinderME getOrganizationFinder() {
         if (organizationF == null)
             organizationF = initNameFinder(EnNerOrganizationModel.url);
         return organizationF;
     }
 
-    public static SimpleLemmatizer getLemmatizer() {
-        ClassLoader classLoader = Toolkit.class.getClassLoader();
+    public SimpleLemmatizer getLemmatizer() {
+        ClassLoader classLoader = getClass().getClassLoader();
         URL resource = classLoader.getResource("en-lemmatizer.dict");
         try {
             return new SimpleLemmatizer(new FileInputStream(new File(resource.getFile())));

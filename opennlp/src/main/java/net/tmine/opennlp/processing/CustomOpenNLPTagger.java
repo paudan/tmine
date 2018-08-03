@@ -30,8 +30,8 @@ public class CustomOpenNLPTagger implements net.tmine.processing.POSTagger {
 
     @Override
     public String[] tagSentence(String string) {
-        POSTagger tagger = Toolkit.getCustomTagger(modelPath);
-        Tokenizer tokenizer = Toolkit.getTokenizer();
+        POSTagger tagger = Toolkit.getInstance().getCustomTagger(modelPath);
+        Tokenizer tokenizer = Toolkit.getInstance().getTokenizer();
         if (tagger == null || string == null)
             return null;
         return tagger.tag(tokenizer.tokenize(string));
@@ -39,8 +39,8 @@ public class CustomOpenNLPTagger implements net.tmine.processing.POSTagger {
 
     @Override
     public String[] tagSentence(Sentence sntnc) {
-        POSTagger tagger = Toolkit.getCustomTagger(modelPath);
-        Tokenizer tokenizer = Toolkit.getTokenizer();
+        POSTagger tagger = Toolkit.getInstance().getCustomTagger(modelPath);
+        Tokenizer tokenizer = Toolkit.getInstance().getTokenizer();
         if (tagger == null || sntnc == null)
             return null;
         return tagger.tag(sntnc.tokenize());
@@ -48,7 +48,7 @@ public class CustomOpenNLPTagger implements net.tmine.processing.POSTagger {
 
     @Override
     public String[] tagSentence(String[] strings) {
-        POSTagger tagger = Toolkit.getCustomTagger(modelPath);
+        POSTagger tagger = Toolkit.getInstance().getCustomTagger(modelPath);
         if (tagger == null || strings == null)
             return null;
         return tagger.tag(strings);

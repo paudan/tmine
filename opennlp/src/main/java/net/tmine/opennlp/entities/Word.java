@@ -36,41 +36,41 @@ public class Word extends net.tmine.entities.Word {
     public void preprocess() throws Exception {
         PorterStemmerWrapper stemmer = new PorterStemmerWrapper();
         stem = stemmer.stem(token);
-        POSTagger tagger = Toolkit.getMaxEntropyPOSTagger();
+        POSTagger tagger = Toolkit.getInstance().getMaxEntropyPOSTagger();
         if (tagger == null)
             throw new InitializationException(POSTagger.class);
 
         String tag[] = tagger.tagSentence(new String[]{token});
         pos = tag[0];
-        SimpleLemmatizer lemmatizer = Toolkit.getLemmatizer();
+        SimpleLemmatizer lemmatizer = Toolkit.getInstance().getLemmatizer();
         if (lemmatizer == null)
             throw new InitializationException(SimpleLemmatizer.class, 
                     "Could not initialize lemmatizer. Check if en-lemmatizer.dict is present in data directory");
         lemma = lemmatizer.lemmatize(token, pos);
-        NameFinderME finder = Toolkit.getNameFinder();
+        NameFinderME finder = Toolkit.getInstance().getNameFinder();
         checkNamedEntity(finder, EntityType.PERSON);
         if (ner == null) {
-            finder = Toolkit.getOrganizationFinder();
+            finder = Toolkit.getInstance().getOrganizationFinder();
             checkNamedEntity(finder, EntityType.ORGANIZATION);
         }
         if (ner == null) {
-            finder = Toolkit.getLocationFinder();
+            finder = Toolkit.getInstance().getLocationFinder();
             checkNamedEntity(finder, EntityType.LOCATION);
         }
         if (ner == null) {
-            finder = Toolkit.getDateFinder();
+            finder = Toolkit.getInstance().getDateFinder();
             checkNamedEntity(finder, EntityType.DATE);
         }
         if (ner == null) {
-            finder = Toolkit.getTimeFinder();
+            finder = Toolkit.getInstance().getTimeFinder();
             checkNamedEntity(finder, EntityType.TIME);
         }
         if (ner == null) {
-            finder = Toolkit.getMoneyFinder();
+            finder = Toolkit.getInstance().getMoneyFinder();
             checkNamedEntity(finder, EntityType.MONEY);
         }
         if (ner == null) {
-            finder = Toolkit.getPercentageFinder();
+            finder = Toolkit.getInstance().getPercentageFinder();
             checkNamedEntity(finder, EntityType.PERCENTAGE);
         }
         if (ner == null)
@@ -90,6 +90,7 @@ public class Word extends net.tmine.entities.Word {
         }
     }
 
+    @Override
     public EntityType getNamedEntityType() {
         return ner_type;
     }

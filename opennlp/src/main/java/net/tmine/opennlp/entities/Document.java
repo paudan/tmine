@@ -68,7 +68,7 @@ public class Document extends net.tmine.entities.Document {
     }
 
     public DiscourseEntity[] findEntityMentions() throws IOException {
-        Linker _linker = Toolkit.getLinker();
+        Linker _linker = Toolkit.getInstance().getLinker();
         if (_linker == null)
             return null;
         // list of document mentions
