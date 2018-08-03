@@ -214,7 +214,12 @@ public class Word implements Preprocessable {
         this.stem = porter.stripAffixes(token);
         isStop = stopSet.contains(token);
         if (pos != null)
-            lemma = getWordnetLemma();
+            try {
+                lemma = getWordnetLemma();
+            } catch (Exception ex) {
+                Logger.getLogger(Word.class.getName()).log(Level.SEVERE, null, ex);
+                lemma = null;
+             }
         ner = checkNER() ? token : null;
     }
 

@@ -25,6 +25,7 @@ import eu.crydee.uima.opennlp.resources.EnNerPersonModel;
 import eu.crydee.uima.opennlp.resources.EnNerTimeModel;
 import eu.crydee.uima.opennlp.resources.EnParserChunkingModel;
 import eu.crydee.uima.opennlp.resources.EnTokenModel;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -75,7 +76,12 @@ public class Toolkit {
         return tokenizer;
     }
 
-    static opennlp.tools.postag.POSTagger getPOSTagger(URL modelURL) {
+    public static opennlp.tools.postag.POSTagger getCustomTagger(String path) {
+        URL modelFile = Toolkit.class.getClassLoader().getResource(path);
+        return Toolkit.getPOSTagger(modelFile);
+    }
+
+    public static opennlp.tools.postag.POSTagger getPOSTagger(URL modelURL) {
         try (InputStream modelIn = modelURL.openStream()) {
             POSModel model = new POSModel(modelIn);
             return new POSTaggerME(model);
@@ -160,39 +166,43 @@ public class Toolkit {
             timeF = initNameFinder(EnNerTimeModel.url);
         return timeF;
     }
-    
+
     public static NameFinderME getLocationFinder() {
         if (locationF == null)
             locationF = initNameFinder(EnNerLocationModel.url);
         return locationF;
     }
-    
+
     public static NameFinderME getMoneyFinder() {
         if (moneyF == null)
             moneyF = initNameFinder(EnNerMoneyModel.url);
         return moneyF;
     }
-    
+
     public static NameFinderME getPercentageFinder() {
         if (percentageF == null)
             percentageF = initNameFinder(EnNerPercentageModel.url);
         return percentageF;
     }
-    
+
     public static NameFinderME getOrganizationFinder() {
         if (organizationF == null)
             organizationF = initNameFinder(EnNerOrganizationModel.url);
         return organizationF;
     }
-    
+
     public static SimpleLemmatizer getLemmatizer() {
-       InputStream stream;
+        ClassLoader classLoader = Toolkit.class.getClassLoader();
+        URL resource = classLoader.getResource("en-lemmatizer.dict");
         try {
-            stream = new FileInputStream("../data/en-lemmatizer.dict");
-            return new SimpleLemmatizer(stream);
+            return new SimpleLemmatizer(new FileInputStream(new File(resource.getFile())));
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Toolkit.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                return new SimpleLemmatizer(new FileInputStream(new File("../data/en-lemmatizer.dict")));
+            } catch (FileNotFoundException ex2) {
+                Logger.getLogger(Toolkit.class.getName()).log(Level.SEVERE, null, ex2);
+                return null;
+            }
         }
-       return null;
     }
 }

@@ -21,13 +21,13 @@ import opennlp.tools.tokenize.Tokenizer;
 
 public class PerceptronPOSTagger implements net.tmine.processing.POSTagger {
     
-    private static PerceptronPOSTagger  INSTANCE;
+    private static PerceptronPOSTagger INSTANCE;
     
     private PerceptronPOSTagger () {}
     
-    public static PerceptronPOSTagger  getInstance() {
+    public static PerceptronPOSTagger getInstance() {
         if (INSTANCE == null)
-            INSTANCE = new PerceptronPOSTagger ();
+            INSTANCE = new PerceptronPOSTagger();
         return INSTANCE;
     }
     

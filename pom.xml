@@ -27,6 +27,29 @@
       </exclusions> 
     </dependency>  
   </dependencies>  
+      <build>
+        <plugins>
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.3.0</version>
+                <executions>
+                    <execution>
+                        <id>acronyms</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://github.com/richardwilly98/elasticsearch-opennlp-auto-tagging/raw/master/src/main/resources/models/en-lemmatizer.dict</url>
+                            <unpack>false</unpack>
+                            <outputDirectory>data</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions> 
+            </plugin>
+        </plugins>
+    </build>
   <properties> 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
     <maven.compiler.source>1.8</maven.compiler.source>  

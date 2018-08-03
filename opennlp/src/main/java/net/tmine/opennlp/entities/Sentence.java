@@ -43,7 +43,7 @@ public class Sentence extends net.tmine.entities.Sentence {
     }
 
     public Sentence(String s, POSTagger tagger, boolean preprocess, String defaultTag) {
-        super(s, tagger, WordFactory.getInstance(), preprocess, defaultTag);
+        super(s, tagger != null ? tagger : MaxEntropyPOSTagger.getInstance(), WordFactory.getInstance(), preprocess, defaultTag);
     }
 
 

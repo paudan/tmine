@@ -15,11 +15,14 @@
  */
 package net.tmine.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -44,6 +47,16 @@ public class PosUtils {
     private PosUtils() {
     }
 
+    private static FileReader getStopWordsFile() throws FileNotFoundException {
+        ClassLoader classLoader = PosUtils.class.getClassLoader();
+        URL resource = classLoader.getResource("stopwords.txt");
+        try {
+            return new FileReader(new File(resource.getFile()));
+        } catch (FileNotFoundException ex) {
+            return new FileReader(new File("../data/stopwords.txt"));
+        }
+    }
+
     public static TreeSet<String> getStopSet() {
         return getStopSet(stopFile);
     }
@@ -51,7 +64,7 @@ public class PosUtils {
     public static TreeSet<String> getStopSet(String stopFile) {
         if (stopSet == null) {
             stopSet = new TreeSet<>();
-            try (Scanner s = new Scanner(new FileReader(stopFile))) {
+            try (Scanner s = new Scanner(PosUtils.getStopWordsFile())) {
                 while (s.hasNext())
                     stopSet.add(s.next());
             } catch (FileNotFoundException ex) {
@@ -111,20 +124,28 @@ public class PosUtils {
     }
 
     public static Dictionary getWordNetInstance() {
-        if (wordnet == null)
+        if (wordnet == null) {
+            ClassLoader classLoader = PosUtils.class.getClassLoader();
+            URL resource = classLoader.getResource("jwnl_properties.xml");
+            File file;
+            if (resource != null)
+                file = new File(resource.getFile());
+            else
+                file = new File("src/main/resources/jwnl_properties.xml");
+            InputStream inputStream;
             try {
-                ClassLoader classLoader = PosUtils.class.getClassLoader();
-                URL resource = classLoader.getResource("jwnl_properties.xml");
-                File file;
-                if (resource != null)
-                    file = new File(resource.getFile());
-                else
-                    file = new File("src/main/resources/jwnl_properties.xml");
-                JWNL.initialize(new FileInputStream(file));
-                wordnet = Dictionary.getInstance();
-            } catch (FileNotFoundException | JWNLException ex) {
-                Logger.getLogger(PosUtils.class.getName()).log(Level.SEVERE, null, ex);
+                inputStream = new FileInputStream(file);
+            } catch (FileNotFoundException ex) {
+                inputStream = new ByteArrayInputStream(PosUtils.DEFAULT_WORDNET_CONFIG.getBytes(StandardCharsets.UTF_8));
             }
+            try {
+                JWNL.initialize(inputStream);
+                wordnet = Dictionary.getInstance();
+            } catch (JWNLException ex) {
+                Logger.getLogger(PosUtils.class.getName()).log(Level.SEVERE, null, ex);
+                wordnet = null;
+            }
+        }
         return wordnet;
     }
 
@@ -139,5 +160,52 @@ public class PosUtils {
             return POS.ADVERB;
         return null;
     }
+
+    static String DEFAULT_WORDNET_CONFIG
+            = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<jwnl_properties language=\"en\">\n"
+            + "    <version publisher=\"Princeton\" number=\"3.0\" language=\"en\"/>\n"
+            + "    <dictionary class=\"net.didion.jwnl.dictionary.FileBackedDictionary\">\n"
+            + "        <param name=\"morphological_processor\" value=\"net.didion.jwnl.dictionary.morph.DefaultMorphologicalProcessor\">\n"
+            + "            <param name=\"operations\">\n"
+            + "                <param value=\"net.didion.jwnl.dictionary.morph.LookupExceptionsOperation\"/>\n"
+            + "                <param value=\"net.didion.jwnl.dictionary.morph.DetachSuffixesOperation\">\n"
+            + "                    <param name=\"noun\" value=\"|s=|ses=s|xes=x|zes=z|ches=ch|shes=sh|men=man|ies=y|\"/>\n"
+            + "                    <param name=\"verb\" value=\"|s=|ies=y|es=e|es=|ed=e|ed=|ing=e|ing=|\"/>\n"
+            + "                    <param name=\"adjective\" value=\"|er=|est=|er=e|est=e|\"/>\n"
+            + "                    <param name=\"operations\">\n"
+            + "                        <param value=\"net.didion.jwnl.dictionary.morph.LookupIndexWordOperation\"/>\n"
+            + "                        <param value=\"net.didion.jwnl.dictionary.morph.LookupExceptionsOperation\"/>\n"
+            + "                    </param>\n"
+            + "                </param>\n"
+            + "                <param value=\"net.didion.jwnl.dictionary.morph.TokenizerOperation\">\n"
+            + "                    <param name=\"delimiters\">\n"
+            + "                        <param value=\" \"/>\n"
+            + "                        <param value=\"-\"/>\n"
+            + "                    </param>\n"
+            + "                    <param name=\"token_operations\">\n"
+            + "                        <param value=\"net.didion.jwnl.dictionary.morph.LookupIndexWordOperation\"/>\n"
+            + "                        <param value=\"net.didion.jwnl.dictionary.morph.LookupExceptionsOperation\"/>\n"
+            + "                        <param value=\"net.didion.jwnl.dictionary.morph.DetachSuffixesOperation\">\n"
+            + "                            <param name=\"noun\" value=\"|s=|ses=s|xes=x|zes=z|ches=ch|shes=sh|men=man|ies=y|\"/>\n"
+            + "                            <param name=\"verb\" value=\"|s=|ies=y|es=e|es=|ed=e|ed=|ing=e|ing=|\"/>\n"
+            + "                            <param name=\"adjective\" value=\"|er=|est=|er=e|est=e|\"/>\n"
+            + "                            <param name=\"operations\">\n"
+            + "                                <param value=\"net.didion.jwnl.dictionary.morph.LookupIndexWordOperation\"/>\n"
+            + "                                <param value=\"net.didion.jwnl.dictionary.morph.LookupExceptionsOperation\"/>\n"
+            + "                            </param>\n"
+            + "                        </param>\n"
+            + "                    </param>\n"
+            + "                </param>\n"
+            + "            </param>\n"
+            + "        </param>\n"
+            + "        <param name=\"dictionary_element_factory\" value=\"net.didion.jwnl.princeton.data.PrincetonWN17FileDictionaryElementFactory\"/>\n"
+            + "        <param name=\"file_manager\" value=\"net.didion.jwnl.dictionary.file_manager.FileManagerImpl\">\n"
+            + "            <param name=\"file_type\" value=\"net.didion.jwnl.princeton.file.PrincetonRandomAccessDictionaryFile\"/>\n"
+            + "            <param name=\"dictionary_path\" value=\"../dict\"/>\n"
+            + "        </param>\n"
+            + "    </dictionary>\n"
+            + "    <resource class=\"PrincetonResource\"/>\n"
+            + "</jwnl_properties>";
 
 }
