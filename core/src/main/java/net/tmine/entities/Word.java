@@ -37,11 +37,13 @@ import net.tmine.entities.Entity.EntityType;
 import net.tmine.processing.Porter;
 import net.tmine.utils.PosUtils;
 
-public class Word implements Preprocessable {
+public class Word {
 
     protected String token, lemma, pos, ner, stem, iob;
     protected boolean isStop;
     protected EntityType nerType;
+
+    public static final String UNDEFINED = "";
     /**
      * The entities which the word object is part of
      */
@@ -61,13 +63,11 @@ public class Word implements Preprocessable {
 
     public Word(String token) throws Exception {
         this.token = token;
-        preprocess();
     }
 
     public Word(String token, String pos) throws Exception {
         this.token = token;
         this.pos = pos;
-        preprocess();
     }
 
     public Word(Word word) {
@@ -77,6 +77,8 @@ public class Word implements Preprocessable {
     }
 
     public String getStem() {
+        if (stem == null)
+            stem = new Porter().stripAffixes(token);
         return stem;
     }
 
@@ -85,6 +87,16 @@ public class Word implements Preprocessable {
     }
 
     public String getLemma() {
+        if (lemma == null) {
+            pos = getPOS();
+            if (pos != null)
+                try {
+                    lemma = getWordnetLemma();
+                } catch (Exception ex) {
+                    Logger.getLogger(Word.class.getName()).log(Level.SEVERE, null, ex);
+                    lemma = UNDEFINED;
+                }
+        }
         return lemma;
     }
 
@@ -92,11 +104,13 @@ public class Word implements Preprocessable {
         return pos;
     }
 
-    public String getNER() {
-        return ner;
-    }
-
     public boolean isStopword() {
+        TreeSet<String> stopSet = PosUtils.getStopSet();
+        lemma = getLemma();
+        if (lemma != null && lemma.compareTo(UNDEFINED) != 0)
+            setStop(stopSet.contains(lemma) || stopSet.contains(token));
+        else
+            setStop(stopSet.contains(token));
         return isStop;
     }
 
@@ -133,13 +147,14 @@ public class Word implements Preprocessable {
      */
     public Map<String, Set<String>> getAllSynonyms() {
         Map<String, Set<String>> set = new HashMap<>();
-        if (pos == null)
+        if (getPOS() == null)
             return set;
         POS wnPos = PosUtils.getWordNetPOS(pos);
         if (dict == null || wnPos == null)
             return set;
         try {
-            String lemma_ = this.lemma != null ? this.lemma : this.token;
+            String lemma_ = getLemma();
+            lemma_ = lemma_ != null ? lemma_ : this.token;
             final IndexWord indexWord = dict.lookupIndexWord(wnPos, lemma_);
             final Synset[] senses = indexWord.getSenses();
             for (Synset sense : senses)
@@ -166,13 +181,14 @@ public class Word implements Preprocessable {
      */
     public Set<String> getSynonyms() {
         Set<String> synonyms = new TreeSet<>();
-        if (pos == null)
+        if (getPOS() == null)
             return synonyms;
         POS wnPos = PosUtils.getWordNetPOS(pos);
         if (dict == null || wnPos == null)
             return synonyms;
         try {
-            String lemma_ = this.lemma != null ? this.lemma : this.token;
+            String lemma_ = getLemma();
+            lemma_ = lemma_ != null ? lemma_ : this.token;
             final IndexWord word = dict.lookupIndexWord(wnPos, lemma_);
             PointerTargetNodeList synList = PointerUtils.getInstance().getSynonyms(word.getSense(1));
             for (Object o : synList) {
@@ -193,7 +209,8 @@ public class Word implements Preprocessable {
         if (dict == null || wnPos == null)
             return hypernyms;
         try {
-            String lemma_ = this.lemma != null ? this.lemma : this.token;
+            String lemma_ = getLemma();
+            lemma_ = lemma_ != null ? lemma_ : this.token;
             final IndexWord word = dict.lookupIndexWord(wnPos, lemma_);
             PointerTargetNodeList hypernymList = PointerUtils.getInstance().getDirectHypernyms(word.getSense(1));
             for (Object o : hypernymList) {
@@ -207,22 +224,6 @@ public class Word implements Preprocessable {
         return hypernyms;
     }
 
-    @Override
-    public void preprocess() throws Exception {
-        Porter porter = new Porter();
-        TreeSet<String> stopSet = PosUtils.getStopSet();
-        this.stem = porter.stripAffixes(token);
-        isStop = stopSet.contains(token);
-        if (pos != null)
-            try {
-                lemma = getWordnetLemma();
-            } catch (Exception ex) {
-                Logger.getLogger(Word.class.getName()).log(Level.SEVERE, null, ex);
-                lemma = null;
-             }
-        ner = checkNER() ? token : null;
-    }
-
     protected void addEntity(Entity entity) {
         entities.add(entity);
     }
@@ -231,7 +232,23 @@ public class Word implements Preprocessable {
         return Collections.unmodifiableList(entities);
     }
 
+    protected void searchNER() {
+        if (ner == null)
+            ner = checkNER() ? token : UNDEFINED;
+    }
+
+    public String getNER() {
+        if (ner == null) {
+            searchNER();
+            if (ner == null)
+                ner = UNDEFINED;
+        }
+        return ner;
+    }
+
     public EntityType getNamedEntityType() {
+        if (nerType == null)
+            searchNER();
         return nerType;
     }
 
@@ -240,7 +257,7 @@ public class Word implements Preprocessable {
     }
 
     private String getWordnetLemma() {
-        POS wnPos = PosUtils.getWordNetPOS(pos);
+        POS wnPos = PosUtils.getWordNetPOS(getPOS());
         MorphologicalProcessor morph = dict.getMorphologicalProcessor();
         try {
             IndexWord res = morph.lookupBaseForm(wnPos, token);

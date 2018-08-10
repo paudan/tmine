@@ -1,26 +1,26 @@
 package net.tmine.opennlp.entities;
 
 import java.util.List;
-import java.util.TreeSet;
 import net.tmine.entities.Entity;
 import net.tmine.entities.Entity.EntityType;
 import net.tmine.entities.InitializationException;
 import net.tmine.opennlp.processing.NamedEntityFinder;
 import net.tmine.opennlp.processing.Toolkit;
 import net.tmine.processing.POSTagger;
-import net.tmine.utils.PosUtils;
 import opennlp.tools.lemmatizer.SimpleLemmatizer;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.stemmer.PorterStemmerWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- @author Paulius Danenas, 2016
+ * @author Paulius Danenas, 2016
  */
 public class Word extends net.tmine.entities.Word {
-    
-    protected EntityType ner_type;
 
-    public Word(String token, String lemma, String pos, String ner, String stem, boolean isStop) {
+    protected SimpleLemmatizer lemmatizer;
+
+    public Word(String token, String lemma, String pos, String ner, String stem, boolean isStop) throws Exception {
         super(token, lemma, pos, ner, stem, isStop);
     }
 
@@ -33,20 +33,47 @@ public class Word extends net.tmine.entities.Word {
     }
 
     @Override
-    public void preprocess() throws Exception {
-        PorterStemmerWrapper stemmer = new PorterStemmerWrapper();
-        stem = stemmer.stem(token);
-        POSTagger tagger = Toolkit.getInstance().getMaxEntropyPOSTagger();
-        if (tagger == null)
-            throw new InitializationException(POSTagger.class);
+    public String getStem() {
+        if (stem == null)
+            stem = new PorterStemmerWrapper().stem(token);
+        return stem;
+    }
 
-        String tag[] = tagger.tagSentence(new String[]{token});
-        pos = tag[0];
-        SimpleLemmatizer lemmatizer = Toolkit.getInstance().getLemmatizer();
-        if (lemmatizer == null)
-            throw new InitializationException(SimpleLemmatizer.class, 
-                    "Could not initialize lemmatizer. Check if en-lemmatizer.dict is present in data directory");
-        lemma = lemmatizer.lemmatize(token, pos);
+    @Override
+    public String getPOS() {
+        if (pos == null) {
+            POSTagger tagger = Toolkit.getInstance().getMaxEntropyPOSTagger();
+            if (tagger == null) {
+                pos = UNDEFINED;
+                return pos;
+            }
+            String tag[] = tagger.tagSentence(new String[]{token});
+            pos = tag[0] != null ? tag[0] : UNDEFINED;
+        }
+        return pos;
+    }
+
+    @Override
+    public String getLemma() {
+        if (lemma == null) {
+            lemmatizer = Toolkit.getInstance().getLemmatizer();
+            if (lemmatizer == null) {
+                Logger logger = LoggerFactory.getLogger(getClass().getName());
+                logger.error("Could not initialize lemmatizer. Check if en-lemmatizer.dict is present");
+                lemma = UNDEFINED;
+            }
+            pos = getPOS();
+            if (token != null && pos != null && pos.compareTo(UNDEFINED) != 0) {
+                lemma = lemmatizer.lemmatize(token, pos);
+                if (lemma == null)
+                    lemma = UNDEFINED;
+            }
+        }
+        return lemma;
+    }
+
+    @Override
+    protected void searchNER() {
         NameFinderME finder = Toolkit.getInstance().getNameFinder();
         checkNamedEntity(finder, EntityType.PERSON);
         if (ner == null) {
@@ -74,9 +101,7 @@ public class Word extends net.tmine.entities.Word {
             checkNamedEntity(finder, EntityType.PERCENTAGE);
         }
         if (ner == null)
-            this.ner_type = EntityType.GENERAL;
-        TreeSet<String> stopSet = PosUtils.getStopSet();
-        setStop(stopSet.contains(lemma) || stopSet.contains(token));
+            this.nerType = EntityType.GENERAL;
     }
 
     private void checkNamedEntity(NameFinderME finder, EntityType type) {
@@ -85,14 +110,8 @@ public class Word extends net.tmine.entities.Word {
             List<Entity> tags = NamedEntityFinder.findEntities(finder, tok, type);
             if (tags.size() > 0) {
                 ner = tags.get(0).getExpression();
-                ner_type = type;
+                nerType = type;
             }
         }
     }
-
-    @Override
-    public EntityType getNamedEntityType() {
-        return ner_type;
-    }
-    
 }

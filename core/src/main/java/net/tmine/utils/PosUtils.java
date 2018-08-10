@@ -53,7 +53,7 @@ public class PosUtils {
         try {
             return new FileReader(new File(resource.getFile()));
         } catch (FileNotFoundException ex) {
-            return new FileReader(new File("../data/stopwords.txt"));
+            return new FileReader(new File(stopFile));
         }
     }
 
@@ -150,6 +150,8 @@ public class PosUtils {
     }
 
     public static POS getWordNetPOS(String pos) {
+        if (pos == null)
+            return null;
         if (pos.startsWith("J"))
             return POS.ADJECTIVE;
         if (pos.startsWith("V"))

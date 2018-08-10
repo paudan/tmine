@@ -17,46 +17,78 @@ package net.tmine.stanfordnlp.entities;
 
 import edu.stanford.nlp.process.Morphology;
 import java.util.List;
-import java.util.TreeSet;
 import net.tmine.entities.Entity;
 import net.tmine.entities.Entity.EntityType;
+import static net.tmine.entities.Word.UNDEFINED;
 import net.tmine.stanfordnlp.processing.MaxEntropyPOSTagger;
 import net.tmine.stanfordnlp.processing.NamedEntityFinder;
-import net.tmine.utils.PosUtils;
 
 public class Word extends net.tmine.entities.Word {
 
+    private Morphology morphology;
+
     public Word(String t, String l, String p, String n, String s, boolean i) {
         super(t, l, p, n, s, i);
+        init();
     }
 
     public Word(String t) throws Exception {
         super(t);
+        init();
     }
-    
+
     public Word(String t, String pos) throws Exception {
         super(t, pos);
+        init();
     }
-    
-    public void preprocess() {
-        MaxEntropyPOSTagger tagger = MaxEntropyPOSTagger.getInstance();
-        String [] tags = tagger.tagSentence(token);
-        if (tags != null && tags.length > 0)
-            setPOS(tags[0]);
-        Morphology morphology = new Morphology();
-        setLemma(morphology.lemma(getToken(), pos));
-        stem = morphology.stem(getToken());
-        List<Entity> entityList = NamedEntityFinder.getInstance().findAllEntities(token);
+
+    private void init() {
+        morphology = new Morphology();
+    }
+
+    @Override
+    public String getPOS() {
+        if (pos == null) {
+            MaxEntropyPOSTagger tagger = MaxEntropyPOSTagger.getInstance();
+            if (tagger == null) {
+                pos = UNDEFINED;
+                return pos;
+            }
+            String[] tags = tagger.tagSentence(getToken());
+            if (tags != null && tags.length > 0)
+                setPOS(tags[0]);
+            else
+                pos = UNDEFINED;
+        }
+        return pos;
+    }
+
+    @Override
+    public String getLemma() {
+        if (lemma == null) {
+            String pos_ = getPOS();
+            if (pos_ != null)
+                setLemma(morphology.lemma(getToken(), pos_));
+            else
+                setLemma(UNDEFINED);
+        }
+        return lemma;
+    }
+
+    @Override
+    public String getStem() {
+        if (stem == null)
+            stem = morphology.stem(getToken());
+        return stem;
+    }
+
+    @Override
+    protected void searchNER() {
+        List<Entity> entityList = NamedEntityFinder.getInstance().findAllEntities(getToken());
         nerType = EntityType.GENERAL;
         if (!entityList.isEmpty())
             nerType = entityList.get(0).getEntityType();
         if (nerType != EntityType.GENERAL)
-            setNER(token);
-        TreeSet<String> stopSet = PosUtils.getStopSet();
-        setStop(stopSet.contains(lemma) || stopSet.contains(token));
-    }
-
-    public EntityType getNamedEntityType() {
-        return nerType;
+            setNER(getToken());
     }
 }

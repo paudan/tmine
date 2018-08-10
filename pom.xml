@@ -41,7 +41,19 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>https://github.com/richardwilly98/elasticsearch-opennlp-auto-tagging/raw/master/src/main/resources/models/en-lemmatizer.dict</url>
+                            <url>https://github.com/paudan/tmine/blob/master/data/en-lemmatizer.dict</url>
+                            <unpack>false</unpack>
+                            <outputDirectory>data</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stopwords</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://github.com/paudan/tmine/blob/master/data/stopwords.txt</url>
                             <unpack>false</unpack>
                             <outputDirectory>data</outputDirectory>
                         </configuration>

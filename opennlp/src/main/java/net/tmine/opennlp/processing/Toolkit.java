@@ -61,6 +61,7 @@ public class Toolkit {
     private Chunker chunker;
     private Parser parser;
     private NameFinderME nameF, dateF, timeF, locationF, organizationF, moneyF, percentageF;
+    private SimpleLemmatizer lemmatizer;
     
     private static Toolkit INSTANCE;
 
@@ -199,17 +200,22 @@ public class Toolkit {
     }
 
     public SimpleLemmatizer getLemmatizer() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        URL resource = classLoader.getResource("en-lemmatizer.dict");
-        try {
-            return new SimpleLemmatizer(new FileInputStream(new File(resource.getFile())));
-        } catch (FileNotFoundException ex) {
+        if (lemmatizer == null) {
+            ClassLoader classLoader = getClass().getClassLoader();
+            URL resource = classLoader.getResource("en-lemmatizer.dict");
+            File f = new File(resource.getFile());
             try {
-                return new SimpleLemmatizer(new FileInputStream(new File("../data/en-lemmatizer.dict")));
-            } catch (FileNotFoundException ex2) {
-                Logger.getLogger(Toolkit.class.getName()).log(Level.SEVERE, null, ex2);
-                return null;
+                lemmatizer = new SimpleLemmatizer(new FileInputStream(f));
+            } catch (FileNotFoundException ex) {
+                try {
+                    InputStream stream = new FileInputStream(new File("../data/en-lemmatizer.dict"));
+                    lemmatizer = new SimpleLemmatizer(stream);
+                } catch (FileNotFoundException ex2) {
+                    Logger.getLogger(Toolkit.class.getName()).log(Level.SEVERE, null, ex2);
+                    lemmatizer = null;
+                }
             }
         }
+        return lemmatizer;
     }
 }

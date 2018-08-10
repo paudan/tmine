@@ -18,8 +18,6 @@ package net.tmine.entities;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.tmine.processing.POSTagger;
 import net.tmine.sentiment.SentiWordNet;
 
@@ -107,11 +105,6 @@ abstract public class Sentence extends ArrayList<Word> implements Preprocessable
         String[] tokens = tokenize();
         for (int i = 0; i < tokens.length; i++) {
             Word word = wordsFactory.createWord(tokens[i]);
-            try {
-                word.preprocess();
-            } catch (Exception ex) {
-                Logger.getLogger(Sentence.class.getName()).log(Level.SEVERE, null, ex);
-            }
             if (defaultTag != null)
                 word.setPOS(defaultTag);
             this.add(word);
@@ -138,8 +131,8 @@ abstract public class Sentence extends ArrayList<Word> implements Preprocessable
         builder.append("Token\tLemma\tStem\tPOS\tNER\tStopword\tIOB").append("\n");
         for (Word word : this)
             builder.append(String.format("%s\t%s\t%s\t%s\t%s\t%b\t%s\n", 
-                    checkNull(word.token), checkNull(word.lemma), checkNull(word.stem), 
-                    checkNull(word.pos), checkNull(word.ner), word.isStop, checkNull(word.iob)));
+                    checkNull(word.getToken()), checkNull(word.getLemma()), checkNull(word.getStem()), 
+                    checkNull(word.getPOS()), checkNull(word.getNER()), word.isStopword(), checkNull(word.getIOB())));
         return builder.toString();
     }
 

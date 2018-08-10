@@ -18,7 +18,6 @@ package net.tmine.opennlp.processing;
 import net.tmine.opennlp.entities.Word;
 import net.tmine.entities.Entity.EntityType;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import org.junit.Test;
 
 public class TagWordsTest {
@@ -92,7 +91,7 @@ public class TagWordsTest {
     @Test
     public void testNER1() throws Exception {
         Word token = new Word("Actor");
-        assertNull(token.getNER());
+        assertEquals(Word.UNDEFINED, token.getNER());
         assertEquals(token.getNamedEntityType(), EntityType.GENERAL);
     }
 
@@ -107,7 +106,7 @@ public class TagWordsTest {
     public void testNER2_1() throws Exception {
         Word token = new Word("Lithuania");
         // Fails to recognize some countries
-        assertNull(token.getNER());
+        assertEquals(Word.UNDEFINED, token.getNER());
         assertEquals(token.getNamedEntityType(), EntityType.GENERAL);
     }
 
@@ -115,7 +114,7 @@ public class TagWordsTest {
     public void testNER3() throws Exception {
         Word token = new Word("Vilnius");
         // Does not recognize Lithuanian cities :(
-        assertNull(token.getNER());
+        assertEquals(Word.UNDEFINED, token.getNER());
         assertEquals(token.getNamedEntityType(), EntityType.GENERAL);
     }
 
@@ -130,7 +129,7 @@ public class TagWordsTest {
     public void testNER5() throws Exception {
         Word token = new Word("₤5");
         // Does not recognize currency symbols
-        assertNull(token.getNER());
+        assertEquals(Word.UNDEFINED, token.getNER());
         assertEquals(token.getNamedEntityType(), EntityType.GENERAL);
     }
 
@@ -138,7 +137,7 @@ public class TagWordsTest {
     public void testNER6() throws Exception {
         Word token = new Word("UNESCO");
         // Fails to recognize even some famous organizations
-        assertNull(token.getNER());
+        assertEquals(Word.UNDEFINED, token.getNER());
         assertEquals(token.getNamedEntityType(), EntityType.GENERAL);
     }
 
@@ -146,7 +145,7 @@ public class TagWordsTest {
     public void testNER7() throws Exception {
         Word token = new Word("2016.09.25");
         // Fails to recognize numeric date expressions
-        assertNull(token.getNER());
+        assertEquals(Word.UNDEFINED, token.getNER());
         assertEquals(token.getNamedEntityType(), EntityType.GENERAL);
     }
 
@@ -154,7 +153,7 @@ public class TagWordsTest {
     public void testNER8() throws Exception {
         Word token = new Word("2016-09-25");
         // Fails to recognize numeric date expressions
-        assertNull(token.getNER());
+        assertEquals(Word.UNDEFINED, token.getNER());
         assertEquals(token.getNamedEntityType(), EntityType.GENERAL);
     }
 
@@ -162,7 +161,7 @@ public class TagWordsTest {
     public void testNER9() throws Exception {
         Word token = new Word("23:00");
         // Fails to recognize numeric time expressions
-        assertNull(token.getNER());
+        assertEquals(Word.UNDEFINED, token.getNER());
         assertEquals(token.getNamedEntityType(), EntityType.GENERAL);
     }
 
@@ -170,7 +169,7 @@ public class TagWordsTest {
     public void testNER10() throws Exception {
         Word token = new Word("23:25:00");
         // Fails to recognize numeric time expressions
-        assertNull(token.getNER());
+        assertEquals(Word.UNDEFINED, token.getNER());
         assertEquals(token.getNamedEntityType(), EntityType.GENERAL);
     }
 
@@ -185,7 +184,7 @@ public class TagWordsTest {
     public void testNER12() throws Exception {
         Word token = new Word("Paulius");
         // Fails to recognize my name :(
-        assertNull(token.getNER());
+        assertEquals(Word.UNDEFINED, token.getNER());
         assertEquals(token.getNamedEntityType(), EntityType.GENERAL);
     }
 
@@ -193,7 +192,7 @@ public class TagWordsTest {
     public void testNER13() throws Exception {
         Word token = new Word("CEO");
         // Fails to recognize popular abbreviations as named entities
-        assertNull(token.getNER());
+        assertEquals(Word.UNDEFINED, token.getNER());
         assertEquals(token.getNamedEntityType(), EntityType.GENERAL);
     }
 
@@ -201,7 +200,7 @@ public class TagWordsTest {
     public void testNER14() throws Exception {
         Word token = new Word("john");
         // Lowercase name is not recognized as named entity
-        assertNull(token.getNER());
+        assertEquals(Word.UNDEFINED, token.getNER());
         assertEquals(token.getNamedEntityType(), EntityType.GENERAL);
     }
 

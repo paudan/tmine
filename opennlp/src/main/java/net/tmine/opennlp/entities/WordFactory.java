@@ -33,7 +33,12 @@ public class WordFactory implements net.tmine.entities.WordFactory {
 
     @Override
     public Word createWord(String t, String l, String p, String n, String s, boolean i) {
-        return new Word(t, l, p, n, s, i);
+        try {
+            return new Word(t, l, p, n, s, i);
+        } catch (Exception ex) {
+            Logger.getLogger(WordFactory.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
