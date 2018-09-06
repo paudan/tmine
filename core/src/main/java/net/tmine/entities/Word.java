@@ -37,7 +37,7 @@ import net.tmine.entities.Entity.EntityType;
 import net.tmine.processing.Porter;
 import net.tmine.utils.PosUtils;
 
-public class Word {
+abstract public class Word {
 
     protected String token, lemma, pos, ner, stem, iob;
     protected boolean isStop;
@@ -100,9 +100,7 @@ public class Word {
         return lemma;
     }
 
-    public String getPOS() {
-        return pos;
-    }
+    abstract public String getPOS();
 
     public boolean isStopword() {
         TreeSet<String> stopSet = PosUtils.getStopSet();

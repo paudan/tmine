@@ -30,27 +30,21 @@ import simplenlg.framework.WordElement;
 import simplenlg.lexicon.Lexicon;
 import simplenlg.realiser.english.Realiser;
 
-/**
- *
- * @author Paulius
- */
-public class VerbWord extends Word {
+
+abstract public class VerbWord extends Word {
 
     public VerbWord(String lemma, String pos, String ner, String stem, boolean isStop) {
         super("VB", lemma, pos, ner, stem, isStop);
     }
 
-    public VerbWord(String token) throws Exception {
-        super(token, "VB");
-    }
-
     public VerbWord(Word word) {
         super(word);
+        
     }
 
     public String getTenseForm(Tense tense) {
         Lexicon lexicon = Lexicon.getDefaultLexicon();
-        WordElement word = lexicon.getWord(lemma, LexicalCategory.VERB);
+        WordElement word = lexicon.getWord(getLemma(), LexicalCategory.VERB);
         InflectedWordElement infl = new InflectedWordElement(word);
         infl.setFeature(Feature.TENSE, tense);
         Realiser realiser = new Realiser(lexicon);

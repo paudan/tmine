@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Paulius Danenas
+ * Copyright 2018 paulius.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.tmine.stanfordnlp.processing;
+package net.tmine.opennlp.entities;
 
-public class MaxEntropyPOSTagger extends StanfordPOSTagger {
-    
-    private static MaxEntropyPOSTagger INSTANCE;
-    
-    private MaxEntropyPOSTagger() {
-        this.tagger = Toolkit.getMaxEntropyPOSTagger();
+public class VerbWord extends net.tmine.entities.VerbWord {
+
+    public VerbWord(String lemma, String pos, String ner, String stem, boolean isStop) {
+        super(lemma, pos, ner, stem, isStop);
     }
-    
-    public static MaxEntropyPOSTagger getInstance() {
-        if (INSTANCE == null)
-            INSTANCE = new MaxEntropyPOSTagger();
-        return INSTANCE;
+
+    public VerbWord(Word word) {
+        super(word);
+        this.pos = word.getPOS();
     }
-    
+
+    @Override
+    public String getPOS() {
+        return pos;
+    }
+
 }

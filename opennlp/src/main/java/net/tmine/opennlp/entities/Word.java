@@ -3,7 +3,6 @@ package net.tmine.opennlp.entities;
 import java.util.List;
 import net.tmine.entities.Entity;
 import net.tmine.entities.Entity.EntityType;
-import net.tmine.entities.InitializationException;
 import net.tmine.opennlp.processing.NamedEntityFinder;
 import net.tmine.opennlp.processing.Toolkit;
 import net.tmine.processing.POSTagger;

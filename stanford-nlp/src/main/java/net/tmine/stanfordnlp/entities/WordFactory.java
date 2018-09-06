@@ -17,7 +17,6 @@ package net.tmine.stanfordnlp.entities;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.tmine.entities.VerbWord;
 
 public class WordFactory implements net.tmine.entities.WordFactory {
     
