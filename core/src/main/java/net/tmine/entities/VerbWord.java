@@ -31,20 +31,25 @@ import simplenlg.lexicon.Lexicon;
 import simplenlg.realiser.english.Realiser;
 
 
-abstract public class VerbWord extends Word {
+public class VerbWord extends Word {
 
     public VerbWord(String lemma, String pos, String ner, String stem, boolean isStop) {
         super("VB", lemma, pos, ner, stem, isStop);
     }
 
-    public VerbWord(Word word) {
-        super(word);
-        
+    public VerbWord(String token, String pos) throws Exception {
+        super(token, pos);
     }
 
+    public VerbWord(String token) throws Exception {
+        super(token);
+    }
+    
     public String getTenseForm(Tense tense) {
         Lexicon lexicon = Lexicon.getDefaultLexicon();
-        WordElement word = lexicon.getWord(getLemma(), LexicalCategory.VERB);
+        String lemma = getLemma();
+        String verbForm = (lemma != null && lemma.length() > 0) ? lemma : token;
+        WordElement word = lexicon.getWord(verbForm, LexicalCategory.VERB);
         InflectedWordElement infl = new InflectedWordElement(word);
         infl.setFeature(Feature.TENSE, tense);
         Realiser realiser = new Realiser(lexicon);
@@ -71,5 +76,10 @@ abstract public class VerbWord extends Word {
                 .replaceAll("^(.*)in$", "$1 in")
                 .replaceAll("^(.*)out$", "$1 out")
                 .replaceAll("^(.*)up$", "$1 up");
+    }
+
+    @Override
+    public String getPOS() {
+        return "VB";
     }
 }

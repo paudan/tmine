@@ -41,7 +41,7 @@ import net.didion.jwnl.dictionary.Dictionary;
 public class PosUtils {
 
     private static TreeSet<String> stopSet;
-    private static String stopFile = "../data/stopwords.txt";
+    private static String stopFile = "/src/main/resources/stopwords.txt";
     private static Dictionary wordnet;
 
     private PosUtils() {

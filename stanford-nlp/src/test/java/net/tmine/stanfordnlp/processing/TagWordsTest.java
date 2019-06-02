@@ -15,8 +15,13 @@
  */
 package net.tmine.stanfordnlp.processing;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
+import net.didion.jwnl.JWNLException;
 import net.tmine.stanfordnlp.entities.Word;
 import net.tmine.entities.Entity.EntityType;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import org.junit.Test;
@@ -205,5 +210,47 @@ public class TagWordsTest {
         Word token = new Word("Jennifer");
         assertEquals("Jennifer", token.getNER());
         assertEquals(EntityType.PERSON, token.getNamedEntityType());
+    }
+    
+        
+    @Test
+    public void testGetSynonyms2() throws JWNLException, Exception {
+        net.tmine.entities.Word token = new Word("house", "NN");
+        // it happens that synonyms are returned only for adjectives; nouns and verbs have hypernyms
+        assertEquals(0, token.getSynonyms().size());
+    }
+    
+    @Test
+    public void testGetSynonyms3() throws JWNLException, Exception {
+        net.tmine.entities.Word token = new Word("interesting", "JJS");
+        System.out.println(Arrays.toString(token.getSynonyms().toArray(new String[] {})));
+        assertArrayEquals(token.getSynonyms().toArray(new String[] {}), 
+                new String[]{"absorbing", "amusing", "amusive", "diverting", "engrossing", "entertaining", "fascinating", 
+                    "gripping", "intriguing", "newsworthy", "riveting"});
+    }
+    
+    
+    @Test
+    public void testGetHypernyms() throws JWNLException, Exception {
+        Word token = new Word("accomplish", "VB");
+        assertArrayEquals(token.getHypernyms().toArray(new String[] {}), 
+                new String[]{"complete", "effect", "effectuate", "finish", "set_up"});
+    }
+    
+    @Test
+    public void testGetHypernyms2() throws JWNLException, Exception {
+        Word token = new Word("interesting", "JJS");
+        // it happens that synonyms are returned only for nouns and verb; synonyms are returned for adjectives
+        assertEquals(0, token.getHypernyms().size());
+    } 
+    
+    
+    @Test
+    public void testGetAllSynonyms() throws Exception {
+        net.tmine.entities.Word token = new Word("interesting", "JJS");
+        Map<String, Set<String>> syns = token.getAllSynonyms();
+        System.out.println("All synonyms for " + token.getToken());
+        for (String synset : syns.keySet())
+            System.out.println(synset + ": {" + Arrays.toString(syns.get(synset).toArray(new String[]{})) + "}");
     }
 }

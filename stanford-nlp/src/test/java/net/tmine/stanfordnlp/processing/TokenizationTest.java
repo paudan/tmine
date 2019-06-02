@@ -15,7 +15,6 @@
  */
 package net.tmine.stanfordnlp.processing;
 
-import java.util.Arrays;
 import net.tmine.stanfordnlp.entities.Sentence;
 import static org.junit.Assert.assertArrayEquals;
 import org.junit.Test;
@@ -23,16 +22,10 @@ import org.junit.Test;
 public class TokenizationTest {
 
     @Test
-    public void testTokenize() {
+    public void testTokenizeSentence() {
         Sentence sent = new Sentence("An input sample sentence.");
         String[] tokens = sent.tokenize();
         assertArrayEquals(tokens, new String[]{"An", "input", "sample", "sentence", "."});
     }
-
-    @Test
-    public void testTagMaxEntropy() {
-        Sentence sent = new Sentence("Pierre Vinken, 61 years old man, will join the board as a nonexecutive director November 29.");
-        String[] tags = MaxEntropyPOSTagger.getInstance().tagSentence(sent);
-        System.out.println(Arrays.toString(tags));
-    }
+    
 }
