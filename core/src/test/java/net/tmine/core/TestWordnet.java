@@ -15,10 +15,15 @@
  */
 package net.tmine.core;
 
+import java.util.Set;
 import net.tmine.utils.PosUtils;
 import net.didion.jwnl.JWNLException;
 import net.didion.jwnl.data.POS;
 import net.didion.jwnl.dictionary.Dictionary;
+import net.didion.jwnl.data.PointerUtils;
+import net.didion.jwnl.data.list.PointerTargetNodeList;
+import net.tmine.entities.NounWord;
+import net.tmine.entities.Word;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import org.junit.Test;
@@ -62,5 +67,13 @@ public class TestWordnet {
         Dictionary instance = PosUtils.getWordNetInstance();
         String word = instance.lookupIndexWord(POS.NOUN, "John").getPOS().toString();
         System.out.println(word);
+    }
+    
+    @Test
+    public void testGetRelationships() throws Exception {
+        NounWord noun = new NounWord("creation");
+        Set<String> derived = noun.getDerivedVerbs();
+        for (String str: derived)
+            System.out.println(str);
     }
 }

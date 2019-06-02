@@ -44,6 +44,10 @@ public class VerbWord extends Word {
     public VerbWord(String token) throws Exception {
         super(token);
     }
+
+    public VerbWord(Word word) {
+        super(word);
+    }
     
     public String getTenseForm(Tense tense) {
         Lexicon lexicon = Lexicon.getDefaultLexicon();

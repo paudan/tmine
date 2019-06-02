@@ -81,6 +81,26 @@ public class TestWord {
     }
     
     @Test
+    public void testIsNoun1() throws Exception {
+        assertTrue(NounWord.isNoun("log"));
+    }
+
+    @Test
+    public void testIsNoun2() throws Exception {
+        assertTrue(NounWord.isNoun("query"));
+    }
+    
+    @Test
+    public void testIsNoun3() throws Exception {
+        assertFalse(NounWord.isNoun("done"));
+    }  
+    
+    @Test
+    public void testIsNoun4() throws Exception {
+        assertFalse(NounWord.isNoun("to"));
+    }  
+    
+    @Test
     public void testSeparateParticle() throws Exception {
         assertEquals("shut down", VerbWord.separateParticle("shutdown"));
     }
