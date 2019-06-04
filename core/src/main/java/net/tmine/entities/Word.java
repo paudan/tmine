@@ -145,7 +145,7 @@ abstract public class Word {
      */
     public Map<String, Set<String>> getAllSynonyms() {
         Map<String, Set<String>> set = new HashMap<>();
-        if (getPOS() == null)
+        if (pos == null)
             return set;
         POS wnPos = PosUtils.getWordNetPOS(pos);
         if (dict == null || wnPos == null)
@@ -179,7 +179,7 @@ abstract public class Word {
      */
     public Set<String> getSynonyms() {
         Set<String> synonyms = new TreeSet<>();
-        if (getPOS() == null)
+        if (pos == null)
             return synonyms;
         POS wnPos = PosUtils.getWordNetPOS(pos);
         if (dict == null || wnPos == null)
@@ -201,6 +201,8 @@ abstract public class Word {
     }
 
     public Set<String> getHypernyms() {
+        if (pos == null)
+            return null;
         POS wnPos = PosUtils.getWordNetPOS(pos);
         Dictionary dict = PosUtils.getWordNetInstance();
         Set<String> hypernyms = new TreeSet<>();
@@ -255,7 +257,11 @@ abstract public class Word {
     }
 
     private String getWordnetLemma() {
-        POS wnPos = PosUtils.getWordNetPOS(getPOS());
+        if (pos == null || token == null)
+            return null;
+        POS wnPos = PosUtils.getWordNetPOS(pos);
+        if (wnPos == null)
+            return null;
         MorphologicalProcessor morph = dict.getMorphologicalProcessor();
         try {
             IndexWord res = morph.lookupBaseForm(wnPos, token);
