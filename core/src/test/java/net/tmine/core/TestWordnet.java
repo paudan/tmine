@@ -20,18 +20,12 @@ import net.tmine.utils.PosUtils;
 import net.didion.jwnl.JWNLException;
 import net.didion.jwnl.data.POS;
 import net.didion.jwnl.dictionary.Dictionary;
-import net.didion.jwnl.data.PointerUtils;
-import net.didion.jwnl.data.list.PointerTargetNodeList;
 import net.tmine.entities.NounWord;
-import net.tmine.entities.Word;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import org.junit.Test;
 
-/**
- *
- * @author Paulius Danenas, 2016
- */
+
 public class TestWordnet {
 
     @Test
